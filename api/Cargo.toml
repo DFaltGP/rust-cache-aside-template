@@ -1,0 +1,29 @@
+[package]
+name = "api_core"
+author = "Guilherme Pacheco"
+version = "1.0.0"
+edition = "2024"
+
+[dependencies]
+# Core API frameworks
+actix-web = "4.12.1"
+tokio = { version = "1.48.0", features = ["full"] }
+
+# Serialize (JSON)
+serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
+
+# Database
+sqlx = { version = "0.8.6", features = ["runtime-tokio-rustls", "postgres", "uuid", "chrono", "macros"] }
+uuid = { version = "1.18.1", features = ["serde", "v4"] }
+
+# Utils
+chrono = { version = "0.4.42", features = ["serde"] }
+dotenvy = "0.15.7"
+env_logger = "0.11.8"
+log = "0.4.28"
+thiserror = "2.0.17"
+argon2 = "0.5.3"
+rand_core = { version = "0.9.3", features = ["std"] }
+jsonwebtoken = { version = "10.2.0", features = ["rust_crypto"] }
+futures-util = "0.3.31"

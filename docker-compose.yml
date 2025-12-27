@@ -1,0 +1,62 @@
+services:
+  nginx:
+    container_name: nginx
+    image: nginx:alpine
+    ports:
+      - "80:80"
+    volumes:
+      - "./nginx.conf:/etc/nginx/nginx.conf:ro"
+      - "./certs:/etc/nginx/certs"
+    depends_on:
+      - api
+
+  api:
+    build:
+      context: ./api
+      dockerfile: ../Dockerfile
+    ports:
+      - "8080:8080"
+    deploy:
+      replicas: 2
+    environment:
+      - DATABASE_URL=DATABASE_URL=postgres://admin:password@postgres:5432/api_core
+      - REDIS_URL=redis://redis:6379
+      - RUST_LOG=info
+      - JWT_SECRET=${JWT_SECRET}
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - api_core_net
+
+  postgres:
+    container_name: postgres
+    image: postgres:17-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: 104161
+      POSTGRES_DB: api_core
+    volumes:
+      - "postgres_data:/var/lib/postgres/data"
+    networks:
+      - api_core_net
+
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    ports:
+      - "6379:6379"
+    networks:
+      - api_core_net
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  api_core_net:
+    driver: bridge
